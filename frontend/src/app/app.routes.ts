@@ -3,11 +3,12 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login';
 import { PerfilComponent } from './components/perfil/perfil';
 import { ListaVideojuegosComponent } from './components/lista-videojuegos/lista-videojuegos';
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'perfil', component: PerfilComponent },
-  { path: 'lista', component: ListaVideojuegosComponent }, // Esta es la nueva ruta
+  { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
+  { path: 'lista', component: ListaVideojuegosComponent, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login', pathMatch: 'full' } // Ruta por si escriben algo mal
 ];

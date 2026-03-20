@@ -1,37 +1,71 @@
-<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">Registrar Videojuego</h3>
-        </div>
-        <div class="card-body">
-            <form [formGroup]="form" (ngSubmit)="guardarVideojuego()">
-                <div class="mb-3">
-                    <label class="form-label">Título del Juego</label>
-                    <input type="text" formControlName="titulo" class="form-control" placeholder="Ej: Halo Infinite">
-                </div>
+<div class="row">
+    <div class="col-md-4 mb-4" *ngIf="user$ | async as user">
+        <div class="card shadow border-0 text-center py-4 h-100">
+            <div class="card-body">
+                <img [src]="user.photoURL || 'assets/no-image.png'" 
+                     class="rounded-circle img-thumbnail mb-3 shadow-sm" 
+                     alt="Foto de perfil"
+                     style="width: 120px; height: 120px; object-fit: cover;">
+                
+                <h4 class="card-title text-primary">{{ user.displayName || 'Usuario' }}</h4>
+                <p class="text-muted small mb-1">{{ user.email }}</p>
+                <span class="badge bg-success rounded-pill">Conectado con Firebase</span>
 
-                <div class="mb-3">
-                    <label class="form-label">Año de Lanzamiento</label>
-                    <input type="number" formControlName="anio" class="form-control" placeholder="Ej: 2021">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Género</label>
-                    <select formControlName="genero" class="form-select">
-                        <option value="" disabled selected>Selecciona un género</option>
-                        <option value="1">Acción</option>
-                        <option value="2">RPG</option>
-                        <option value="3">Deportes</option>
-                    </select>
-                </div>
-
-                <div class="d-grid">
-                    <button type="submit" [disabled]="form.invalid || loading" class="btn btn-success">
-                        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-                        {{ loading ? 'Guardando...' : 'Guardar en Base de Datos SQL' }}
+                <div class="d-grid gap-2 px-4 mt-2">
+                    <button (click)="logOut()" class="btn btn-outline-danger btn-sm shadow-sm">
+                        <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                     </button>
                 </div>
-            </form>
+                
+                <hr class="my-4">
+                <p class="card-text text-secondary small">
+                    Desde aquí puedes registrar tus videojuegos favoritos directamente en nuestra base de datos SQL Server segura en Somee.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card shadow border-0 h-100">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h3 class="mb-0 text-dark fw-bold">
+                    <i class="bi bi-pencil-square text-success me-2"></i>Registrar Nuevo Videojuego
+                </h3>
+                <p class="text-muted mt-2">Completa los datos para guardarlo en Somee.</p>
+            </div>
+            <div class="card-body">
+                <form [formGroup]="form" (ngSubmit)="guardarVideojuego()">
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" formControlName="titulo" class="form-control" id="floatingTitulo" placeholder="Ej: Halo Infinite">
+                        <label for="floatingTitulo">Título del Juego</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="number" formControlName="anio" class="form-control" id="floatingAnio" placeholder="Ej: 2021">
+                        <label for="floatingAnio">Año de Lanzamiento</label>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <select formControlName="genero" class="form-select" id="floatingGenero">
+                            <option value="" disabled selected>Selecciona un género...</option>
+                            <option value="1">Acción</option>
+                            <option value="2">RPG (Rol)</option>
+                            <option value="3">Deportes</option>
+                            <option value="4">Aventura</option>
+                        </select>
+                        <label for="floatingGenero">Género</label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" [disabled]="form.invalid || loading" class="btn btn-success btn-lg shadow-sm">
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            <i *ngIf="!loading" class="bi bi-cloud-arrow-up-fill me-2"></i>
+                            {{ loading ? 'Guardando en Somee...' : 'Guardar en Base de Datos SQL' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
