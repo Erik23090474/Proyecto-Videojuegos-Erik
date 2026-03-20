@@ -1,56 +1,71 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth';
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { Firestore, doc, onSnapshot } from '@angular/fire/firestore'; // Cambiamos docData por onSnapshot
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { VideojuegosService } from '../../services/videojuegos';
+import { Auth } from '@angular/fire/auth';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [AsyncPipe, CommonModule, ReactiveFormsModule],
-  templateUrl: './perfil.html',
-  styleUrls: ['./perfil.css']
+  imports: [ReactiveFormsModule, CommonModule],
+  templateUrl: './perfil.component.html',
+  styleUrl: './perfil.component.css'
 })
 export class PerfilComponent implements OnInit {
-  authService = inject(AuthService);
-  private firestore = inject(Firestore);
-  private fb = inject(FormBuilder);
+  form: FormGroup;
+  loading: boolean = false;
 
-  videojuegoForm!: FormGroup;
-  
-  // Usamos un BehaviorSubject para manejar los datos de Firestore manualmente y evitar el error de tipo
-  private userDataSource = new BehaviorSubject<any>(null);
-  userData$ = this.userDataSource.asObservable();
-
-  ngOnInit(): void {
-    // 1. Inicializar el formulario
-    this.videojuegoForm = this.fb.group({
-      titulo: ['', [Validators.required]],
-      anio: ['', [Validators.required, Validators.min(1950)]],
-      genero: ['', [Validators.required]]
-    });
-
-    // 2. Escuchar al usuario de Auth y luego traer sus datos de Firestore
-    this.authService.user$.subscribe(user => {
-      if (user) {
-        const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
-        
-        // onSnapshot escucha cambios en tiempo real sin errores de "_Query"
-        onSnapshot(userDocRef, (snapshot) => {
-          if (snapshot.exists()) {
-            this.userDataSource.next(snapshot.data());
-          }
-        });
-      }
+  constructor(
+    private fb: FormBuilder,
+    private _videojuegosService: VideojuegosService,
+    private auth: Auth
+  ) {
+    // Definimos el formulario con validaciones básicas
+    this.form = this.fb.group({
+      titulo: ['', [Validators.required, Validators.minLength(2)]],
+      anio: ['', [Validators.required, Validators.min(1950), Validators.max(2026)]],
+      genero: ['', [Validators.required]] // Recibe el ID (1, 2 o 3)
     });
   }
 
+  ngOnInit(): void {}
+
   guardarVideojuego() {
-    if (this.videojuegoForm.valid) {
-      console.log('Datos listos para SQL:', this.videojuegoForm.value);
-      alert('¡Datos capturados! El formulario funciona correctamente.');
-      this.videojuegoForm.reset();
+    if (this.form.invalid) {
+      alert('Por favor, llena todos los campos correctamente.');
+      return;
     }
+
+    this.loading = true;
+    const user = this.auth.currentUser; // Obtenemos el usuario autenticado en Firebase
+
+    if (!user) {
+      alert('Debes estar autenticado para guardar datos.');
+      this.loading = false;
+      return;
+    }
+
+    // Estructura de datos para el Backend
+    const datosVideojuego = {
+      titulo: this.form.value.titulo,
+      anio: this.form.value.anio,
+      genero: parseInt(this.form.value.genero), // Convertimos a número para SQL Server
+      usuario_uid: user.uid // El ID único de Firebase
+    };
+
+    // Llamada al servicio
+    this._videojuegosService.guardarVideojuego(datosVideojuego).subscribe({
+      next: (res) => {
+        console.log('Respuesta del servidor:', res);
+        alert('¡Videojuego guardado en SQL Server (Somee) con éxito!');
+        this.form.reset(); // Limpiamos el formulario
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al guardar:', err);
+        alert('Hubo un error al conectar con el servidor.');
+        this.loading = false;
+      }
+    });
   }
 }
