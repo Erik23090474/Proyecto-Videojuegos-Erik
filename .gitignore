@@ -1,0 +1,12 @@
+# Carpetas pesadas de dependencias
+node_modules/
+dist/
+.angular/
+
+# Archivos de configuración local y secretos
+.env
+.DS_Store
+*.log
+
+# Firebase
+.firebase/
