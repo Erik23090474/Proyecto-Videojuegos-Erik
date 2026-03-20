@@ -10,11 +10,16 @@ export class VideojuegosService {
   private myAppUrl: string;
 
   constructor(private http: HttpClient) {
-    this.myAppUrl = environment.apiUrl;
+    this.myAppUrl = environment.apiUrl; // Asegúrate de tener esto en environment.ts
   }
 
-  // Método para guardar el videojuego en SQL Server
+  // Enviar a SQL Server
   guardarVideojuego(videojuego: any): Observable<any> {
     return this.http.post(`${this.myAppUrl}/videojuegos`, videojuego);
+  }
+
+  // Traer de SQL Server
+  obtenerVideojuegos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.myAppUrl}/videojuegos`);
   }
 }

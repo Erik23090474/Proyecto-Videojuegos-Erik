@@ -9,5 +9,5 @@ export const environment = {
     appId: "1:844466379239:web:a0b740308dff49c5808542"
   },
   // Esto lo usaremos cuando hagamos el backend con Node.js
-  apiUrl: 'proyecto-videojuegos-erik-production.up.railway.app'
+  apiUrl: 'https://proyecto-videojuegos-erik-production.up.railway.app/api'
 };

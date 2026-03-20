@@ -8,8 +8,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-perfil',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './perfil.component.html',
-  styleUrl: './perfil.component.css'
+  templateUrl: './perfil.html',
+  styleUrl: './perfil.css'
 })
 export class PerfilComponent implements OnInit {
   form: FormGroup;

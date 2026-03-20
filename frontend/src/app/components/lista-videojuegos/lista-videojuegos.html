@@ -1,0 +1,38 @@
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Inventario de Videojuegos (SQL Server)</h3>
+            <button class="btn btn-outline-light btn-sm" (click)="cargarVideojuegos()">Actualizar</button>
+        </div>
+        <div class="card-body">
+            <div *ngIf="loading" class="text-center my-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p>Cargando datos desde Somee...</p>
+            </div>
+
+            <table *ngIf="!loading" class="table table-hover mt-3">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Año</th>
+                        <th>Género</th>
+                        <th>Propietario (UID)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let juego of listVideojuegos">
+                        <td>{{ juego.id }}</td>
+                        <td>{{ juego.titulo }}</td>
+                        <td>{{ juego.anio }}</td>
+                        <td><span class="badge bg-info text-dark">{{ juego.genero }}</span></td>
+                        <td><small class="text-muted">{{ juego.usuario_uid }}</small></td>
+                    </tr>
+                    <tr *ngIf="listVideojuegos.length === 0">
+                        <td colspan="5" class="text-center">No hay videojuegos registrados aún.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
