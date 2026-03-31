@@ -20,15 +20,28 @@ export class ListaVideojuegosComponent implements OnInit {
   }
 
   cargarVideojuegos() {
-    this._videojuegosService.obtenerVideojuegos().subscribe({
-      next: (data) => {
-        this.listVideojuegos = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error al cargar la lista:', err);
-        this.loading = false;
-      }
-    });
+  const userString = localStorage.getItem('user');
+
+  if (!userString) {
+    console.error("No hay usuario en localStorage");
+    this.loading = false;
+    return;
   }
+
+  const user = JSON.parse(userString);
+  const uid = user.uid;
+
+  console.log("UID:", uid); // debug
+
+  this._videojuegosService.obtenerVideojuegos(uid).subscribe({
+    next: (data: any[]) => {
+      this.listVideojuegos = data;
+      this.loading = false;
+    },
+    error: (err: any) => {
+      console.error('Error al cargar la lista:', err);
+      this.loading = false;
+    }
+  });
+}
 }

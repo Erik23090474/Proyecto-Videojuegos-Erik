@@ -19,7 +19,7 @@ export class VideojuegosService {
   }
 
   // Traer de SQL Server
-  obtenerVideojuegos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.myAppUrl}/videojuegos`);
+  obtenerVideojuegos(uid: string): Observable<any[]> {
+  return this.http.get<any[]>(`${this.myAppUrl}/videojuegos?uid=${uid}`);
   }
 }

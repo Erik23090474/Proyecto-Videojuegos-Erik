@@ -39,8 +39,13 @@ export class PerfilComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Podrías usar this.user$.subscribe(...) si necesitas hacer algo específico al cargar
-  }
+  this.user$.subscribe((user) => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+      console.log("Usuario guardado en localStorage:", user);
+    }
+  });
+}
   
   async logOut() {
     try {

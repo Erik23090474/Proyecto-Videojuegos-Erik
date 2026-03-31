@@ -41,13 +41,21 @@ app.post('/api/videojuegos', async (req, res) => {
 // RUTA 2: LISTAR (GET)
 app.get('/api/videojuegos', async (req, res) => {
     try {
+        const { uid } = req.query;
+
+        console.log("UID recibido:", uid);
+
         let pool = await sql.connect(dbConfig);
         const result = await pool.request()
+            .input('uid', sql.VarChar, uid)
             .query(`
-                SELECT V.id, V.titulo, V.anio, G.nombre as genero, V.usuario_uid 
-                FROM Videojuegos V
-                INNER JOIN Generos G ON V.genero_id = G.id
+                SELECT *
+                FROM Videojuegos
+                WHERE usuario_uid = @uid
             `);
+
+        console.log("RESULTADO:", result.recordset);
+
         res.json(result.recordset);
     } catch (err) {
         console.error(err);
